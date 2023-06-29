@@ -79,13 +79,13 @@ Dimensions varchar(20)
 create table Items(
 IdItem int identity(1,1),
 CodeItem varchar(12) primary key,
-CodeUniversel varchar(max),
+CodeUniversal varchar(max),
 WeightItem float,
-OrigineItem varchar(10),
+OriginItem varchar(10),
 UniteVenteItem varchar(12),
 DeclinationItem varchar(12) references Items(CodeItem),
 CodeProvider varchar(12) references Providers(CodeProvider),
-CodeTarif varchar(12) references Prices(CodePrice),
+CodePrice varchar(12) references Prices(CodePrice),
 CodeTax varchar(12) references Tax(CodeTax),
 CodeVolume varchar(12) references Volumes(CodeVolume),
 CodeDescriptive varchar(12) references Descriptive(CodeDescriptive)

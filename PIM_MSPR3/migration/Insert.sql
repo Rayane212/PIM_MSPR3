@@ -43,10 +43,10 @@ INSERT INTO Volumes (CodeVolume, Descriptive, Weights, Dimensions)
 VALUES ('V002', 'Volume 2', 5.2, '15x15x15');
 
 -- Insertions dans la table Items
-INSERT INTO Items (CodeItem, CodeUniversel, WeightItem, OrigineItem, UniteVenteItem, DeclinationItem, CodeProvider, CodeTarif, CodeTax, CodeVolume, CodeDescriptive)
+INSERT INTO Items (CodeItem, CodeUniversal, WeightItem, OriginItem, UniteVenteItem, DeclinationItem, CodeProvider, CodePrice, CodeTax, CodeVolume, CodeDescriptive)
 VALUES ('I001', 'UNI001', 1.2, 'Origin1', 'Unit1', NULL, 'P001', 'PR001', 'T001', 'V001', 'D001');
 
-INSERT INTO Items (CodeItem, CodeUniversel, WeightItem, OrigineItem, UniteVenteItem, DeclinationItem, CodeProvider, CodeTarif, CodeTax, CodeVolume, CodeDescriptive)
+INSERT INTO Items (CodeItem, CodeUniversal, WeightItem, OriginItem, UniteVenteItem, DeclinationItem, CodeProvider, CodePrice, CodeTax, CodeVolume, CodeDescriptive)
 VALUES ('I002', 'UNI002', 0.8, 'Origin2', 'Unit2', NULL, 'P002', 'PR002', 'T002', 'V002', 'D002');
 
 -- Insertions dans la table Medias

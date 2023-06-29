@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using PIM_MSPR3.Model;
@@ -88,7 +89,28 @@ app.MapGet("/signIn", async (IConfiguration _config, HttpContext http, string us
     }
 });
 
+// Read Items
+app.MapGet("/GetAllItems", async (IConfiguration _config, HttpContext http) =>
+{
+    //var userId = http.Session.GetString("UserId");
+    var token = http.Request.Headers["Authorization"].ToString().Split(" ")[1];
+    var claims = JwtUtils.DecodeJwt(token, _config["JwtConfig:Secret"]);
+    var userId = claims[ClaimTypes.NameIdentifier];
 
+    if (userId == null || userId == "")
+    {
+        http.Response.StatusCode = 401;
+        await http.Response.WriteAsync("Utilisateur non connecté.");
+        return;
+    }
+    var oSqlConnection = new SqlConnection(_config.GetConnectionString("SQL"));
+    var ok = oSqlConnection.Query<ItemEntity>("Select * from Items").ToList();
+
+    http.Response.StatusCode = 200;
+    await http.Response.WriteAsJsonAsync(ok);
+
+
+});
 
 app.UseHttpsRedirection();
 
