@@ -88,27 +88,7 @@ app.MapGet("/signIn", async (IConfiguration _config, HttpContext http, string us
     }
 });
 
-// logout
-app.MapPost("/logout", async (HttpContext http, IConfiguration _config) =>
-{
-    var token = http.Request.Headers["Authorization"].ToString().Split(" ")[1];
-    var claims = JwtUtils.DecodeJwt(token, _config["JwtConfig:Secret"]);
-    var userId = claims[ClaimTypes.NameIdentifier];
-    if (token != "")
-    {
-        http.Request.Headers.Remove("Authorization");
-        http.Response.Redirect("/");
-        http.Response.StatusCode = 200;
-        await http.Response.WriteAsync($"Utilisateur {userId} a été déconnecté.");
-    }
-    else
-    {
-        http.Response.StatusCode = 409;
-        await http.Response.WriteAsync("Il y'a eu un problème.");
-        return;
-    }
 
-});
 
 app.UseHttpsRedirection();
 
