@@ -1,6 +1,6 @@
 ﻿namespace PIM_MSPR3.Model
 {
-    public class UtilisateursRepos
+    public class UserRepos
     {
     }
 }
