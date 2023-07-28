@@ -118,7 +118,7 @@ app.MapPost("/signUp", async (IConfiguration _config, HttpContext http, UserEnti
         return;
     }
     await connection.QueryAsync<UserEntity>(
-        "INSERT INTO Users (NameUser, LastNameUser, Username, MailUser, PasswordUser, CodeUser) VALUES (@NameUser, @MailUser, @PasswordUser, @CodeUser)", new { user.NameUser,user.LastNameUser, user.Username, user.MailUser, user.PasswordUser, CodeUser = userId });
+        "INSERT INTO Users (NameUser, LastNameUser, Username, MailUser, PasswordUser, CodeUser) VALUES (@NameUser, @LastNameUser, @Username, @MailUser, @PasswordUser, @CodeUser)", new { user.NameUser,user.LastNameUser, user.Username, user.MailUser, user.PasswordUser, CodeUser = userId });
 
 
     http.Response.StatusCode = 200; // Code HTTP 200 OK
