@@ -122,7 +122,7 @@ app.MapPost("/signUp", async (IConfiguration _config, HttpContext http, UserEnti
 
 
     http.Response.StatusCode = 200; // Code HTTP 200 OK
-    await http.Response.WriteAsync($"Utilisateur {userId} créé avec succès.");
+    await http.Response.WriteAsync($"{userId} user successfully created.");
 });
 
 // Read Items
