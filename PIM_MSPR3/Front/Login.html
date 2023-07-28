@@ -101,9 +101,9 @@
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        nomUtilisateur: username,
-        MotDePasse: password,
+         body: new URLSearchParams({
+             Username: username,
+             Password: password,
       }),
     })
       .then(response => {

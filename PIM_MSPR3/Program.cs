@@ -56,8 +56,8 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // 
     try
     {
         // Récupération des identifiants de l'utilisateur
-        string username = http.Request.Form["nomUtilisateur"];
-        string password = http.Request.Form["MotDePasse"];
+        string username = http.Request.Form["Username"];
+        string password = http.Request.Form["Password"];
 
         // Vérifier que les identifiants sont valides
         using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
