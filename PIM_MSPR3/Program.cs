@@ -107,7 +107,7 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // 
 
 app.MapPost("/signUp", async (IConfiguration _config, HttpContext http, UserEntity user) =>
 {
-    var userId = user.NameUser.ToUpper() + new Guid(Guid.NewGuid().ToString());
+    var userId = user.NameUser.ToUpper();
     using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
     var existingUser = await connection.QuerySingleOrDefaultAsync<UserEntity>(
         "SELECT * FROM Users WHERE MailUser = @MailUser OR Username = @Username", new { user.MailUser, user.Username });
