@@ -7,7 +7,7 @@
         public string NameUser { get; set; }
         public string LastNameUser { get; set; }
         public string Username { get; set; }
-        public string mailUser { get; set; }
+        public string MailUser { get; set; }
         public string PasswordUser { get; set; }
 
     }
