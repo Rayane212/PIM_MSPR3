@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css"
+    />
+    <link rel="stylesheet" href="./CSS/SignIn.css" />
+    <script src="./JS/app.js"></script>
+  </head>
+  <body>
+    <div class="container px-4 py-5 mx-auto">
+      <div class="card card0">
+        <div class="d-flex flex-lg-row flex-column-reverse">
+          <div class="card card1">
+            <div class="row justify-content-center my-auto">
+              <div class="col-md-8 col-10 my-5">
+                <div class="row justify-content-center px-3 mb-3">
+                  <img id="logo" src="./img/Logo-Z_Dailybiz.png" />
+                </div>
+                <h3 class="mb-5 text-center heading">DailyPim</h3>
+
+                <h6 class="msg-info">Please login to your account</h6>
+
+                <div id="createAccountForm" class="form-group">
+                  <label class="form-control-label text-muted"
+                    >First name</label
+                  >
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="email"
+                    placeholder="write your first name"
+                    class="form-control"
+                  />
+                </div>
+                <div id="createAccountForm" class="form-group">
+                  <label class="form-control-label text-muted">Last name</label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="email"
+                    placeholder="write your last name"
+                    class="form-control"
+                  />
+                </div>
+                <div id="createAccountForm" class="form-group">
+                    <label class="form-control-label text-muted">Username</label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="email"
+                      placeholder="write your username"
+                      class="form-control"
+                    />
+
+                <div id="createAccountForm" class="form-group">
+                  <label class="form-control-label text-muted">e-mail</label>
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    placeholder="paul@gmail.com"
+                    class="form-control"
+                  />
+                </div>
+                <div id="createAccountForm" class="form-group">
+                  <label class="form-control-label text-muted">mobile</label>
+                  <input
+                    type="text"
+                    id=""
+                    name="email"
+                    placeholder="+3365952854..."
+                    class="form-control"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-control-label text-muted">Password</label>
+                  <input
+                    type="password"
+                    id="psw"
+                    name="psw"
+                    placeholder="create your password "
+                    class="form-control"
+                  />
+                </div>
+
+                <div class="row justify-content-center my-3 px-3">
+                  <button
+                    type="submit"
+                    class="btn-block btn-color"
+                    onclick="signUp()"
+                  >
+                    Create DailyPim account
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="bottom text-center mb-5">
+              <p href="#" class="sm-text mx-auto mb-3">
+                Already have an account? Sign In
+                <button
+                  class="btn btn-white ml-2"
+                  onclick="redirectToConnectPage()"
+                >
+                  Connect to DailyPim
+                </button>
+              </p>
+            </div>
+            <div id="createAccountForm" class="hidden">
+              <!-- Formulaire pour la création d'un nouveau compte -->
+              <!-- Incluez les champs Last name, First name, username, e-mail, mobile -->
+
+              <div id="createAccountForm" class="form-group">
+                <label class="form-control-label text-muted">Username</label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="Phone no or email id"
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="card card2">
+            <div class="my-auto mx-md-5 px-md-5 right">
+              <h3 class="text-white">We are more than just a company</h3>
+              <small class="text-white"
+                >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
+                do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                laboris nisi ut aliquip ex ea commodo consequat.</small
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+function signUp() {
+  var firstName = document.getElementById("firstName").value;
+  var lastName = document.getElementById("lastName").value;
+  var username = document.getElementById("username").value;
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("psw").value;
+  console.log(
+    `Username: ${username}; Email: ${email}; Password: ${password}`
+  );
+
+  fetch("https://localhost:7244/signUp", {
+    method: "POST", 
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      NameUser: firstName, 
+      LastNameUser: lastName,
+      Username: username,
+      MailUser: email,
+      PasswordUser: password,
+    }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log("User created successfully.");
+        window.location.href = "login.html";
+      } else {
+        throw new Error("Username or email already in use.");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+</script>

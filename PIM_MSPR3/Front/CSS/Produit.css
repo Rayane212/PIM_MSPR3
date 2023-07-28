@@ -1,0 +1,24 @@
+.btn {
+    padding: .55rem 1.5rem .35rem;
+  }
+
+.gradient-custom {
+  /* fallback for old browsers */
+  background: #c471f5;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, rgb(55, 32, 136), rgb(56, 27, 136));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, rgb(190, 221, 13), rgb(55, 32, 136), rgb(56, 27, 136));
+}
+
+.container{
+    margin-top: 2%;
+
+
+}
+
+
+
+
