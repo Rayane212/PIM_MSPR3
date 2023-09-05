@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
                       });
 });
 
-// Ajouter le service de cache distribuÈ
+// Ajouter le service de cache distribu√©
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -51,15 +51,15 @@ if (app.Environment.IsDevelopment())
 app.UseSession();
 app.UseCors(MyAllowSpecificOrigins);
 // SignIn 
-app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // Pour tester en front supprimer les var username et password des paramÈtre et mette la route en post 
+app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // Pour tester en front supprimer les var username et password des param√©tre et mette la route en post 
 {
     try
     {
-        // RÈcupÈration des identifiants de l'utilisateur
+        // R√©cup√©ration des identifiants de l'utilisateur
         string username = http.Request.Form["Username"];
         string password = http.Request.Form["Password"];
 
-        // VÈrifier que les identifiants sont valides
+        // V√©rifier que les identifiants sont valides
         using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
         var user = await connection.QuerySingleOrDefaultAsync<UserEntity>(
             "SELECT * FROM Users WHERE MailUser = @MailUser OR UserName = @Username AND PasswordUser = @PasswordUser", new { MailUser = username, Username = username, PasswordUser = password });
@@ -70,7 +70,7 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // 
             return;
         }
 
-        // CrÈation du token d'authentification
+        // Cr√©ation du token d'authentification
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_config["JwtConfig:Secret"]);
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -90,7 +90,7 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // 
         http.Response.Headers.Add("Authorization", "Bearer " + tokenString);
 
 
-        // Retourner le token d'authentification dans la rÈponse du serveur
+        // Retourner le token d'authentification dans la r√©ponse du serveur
         http.Response.StatusCode = 200;
         http.Response.ContentType = "application/json";
         await http.Response.WriteAsync(JsonConvert.SerializeObject(new { Token = tokenString }));
@@ -136,7 +136,7 @@ app.MapGet("/GetAllItems", async (IConfiguration _config, HttpContext http) =>
     if (userId == null || userId == "")
     {
         http.Response.StatusCode = 401;
-        await http.Response.WriteAsync("Utilisateur non connectÈ.");
+        await http.Response.WriteAsync("Utilisateur non connect√©.");
         return;
     }
     var oSqlConnection = new SqlConnection(_config.GetConnectionString("SQL"));
