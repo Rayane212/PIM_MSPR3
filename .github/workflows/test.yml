@@ -1,1 +1,9 @@
-
+on: pull_request
+name: Test
+jobs:     
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: dotnet test
