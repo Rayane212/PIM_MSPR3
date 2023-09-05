@@ -143,7 +143,7 @@ app.MapGet("/GetAllItems", async (IConfiguration _config, HttpContext http) =>
     var ok = oSqlConnection.Query<ItemEntity>("Select * from Items").ToList();
 
     http.Response.StatusCode = 200;
-    awit http.Response.WriteAsJsonAsync(ok);
+    await http.Response.WriteAsJsonAsync(ok);
 
 
 });
