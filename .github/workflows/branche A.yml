@@ -5,5 +5,5 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - run: dotnet build --runtime
+      - run: dotnet build
       
