@@ -1,5 +1,5 @@
 on: push
-name: Test
+name: Binary
 jobs:     
   web-deploy:
     name: Deploy
