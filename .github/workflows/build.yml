@@ -1,5 +1,5 @@
 on: push
-name: Deploy & Build
+name: Build
 jobs:
   web-deploy:
     name: Deploy
