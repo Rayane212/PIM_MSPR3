@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: dotnet pack
       - name: Deploy_on_server
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
