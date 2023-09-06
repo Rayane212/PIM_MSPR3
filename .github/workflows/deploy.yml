@@ -17,4 +17,4 @@ jobs:
           username: ducobu
           password: ducobu
           local-dir: release.tar/
-          server-dir: andy
+          server-dir: andy/
