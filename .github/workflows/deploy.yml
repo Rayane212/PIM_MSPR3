@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Deploy_on_server
-        uses: pim_mspr3/ftp-action@releases/v4
+        uses: ftp-action@releases/v4
         with:
           host: ftp://51.91.148.161.fr
           username: ducobu
