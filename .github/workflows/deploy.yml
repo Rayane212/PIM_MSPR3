@@ -16,5 +16,5 @@ jobs:
           server: 51.91.148.161
           username: ducobu
           password: ducobu
-          local-dir: release.tar/
+          local-dir: release/
           server-dir: andy/
