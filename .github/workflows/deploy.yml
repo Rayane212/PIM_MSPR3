@@ -9,9 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Deploy_on_server
-        uses: ftp-action@releases/v4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          host: ftp://51.91.148.161.fr
+          server: 51.91.148.161
           username: ducobu
           password: ducobu          
 
