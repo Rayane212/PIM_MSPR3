@@ -9,13 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: dotnet publish
-      - run: tar -cf release.tar PIM_MSPR3/bin/Debug/net7.0/publish
       - name: Deploy_on_server
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: 51.91.148.161
           username: ducobu
           password: ducobu
-          local-dir: release.tar
-          server-dir: andy
-
+          
