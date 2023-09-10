@@ -51,18 +51,18 @@ if (app.Environment.IsDevelopment())
 app.UseSession();
 app.UseCors(MyAllowSpecificOrigins);
 // SignIn 
-app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // Pour tester en front supprimer les var username et password des paramétre et mette la route en post 
+app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? mail ,string? username, string password ) =>  // Pour tester en front supprimer les var username et password des paramétre et mette la route en post 
 {
     try
     {
         // Récupération des identifiants de l'utilisateur
-        string username = http.Request.Form["Username"];
-        string password = http.Request.Form["Password"];
+        //string username = http.Request.Form["Username"];
+        //string password = http.Request.Form["Password"];
 
         // Vérifier que les identifiants sont valides
         using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
-        var user = await connection.QuerySingleOrDefaultAsync<UserEntity>(
-            "SELECT * FROM Users WHERE MailUser = @MailUser OR UserName = @Username AND PasswordUser = @PasswordUser", new { MailUser = username, Username = username, PasswordUser = password });
+        var userRepos = new UserRepos(_config);
+        var user = await userRepos.GetUserAuthAsync(mail, username, password);
         if (user == null)
         {
             http.Response.StatusCode = 401; // Code HTTP 401 Unauthorized
@@ -71,21 +71,8 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http ) =>  // 
         }
 
         // Création du token d'authentification
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_config["JwtConfig:Secret"]);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.CodeUser.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.MailUser),
-            }),
-            Expires = DateTime.UtcNow.AddHours(2),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var tokenString = tokenHandler.WriteToken(token);
+        var jwtUtils = new JwtUtils(_config);
+        string tokenString = jwtUtils.CreateToken(user);
 
         http.Response.Headers.Add("Authorization", "Bearer " + tokenString);
 
@@ -109,17 +96,15 @@ app.MapPost("/signUp", async (IConfiguration _config, HttpContext http, UserEnti
 {
     var userId = user.NameUser.ToUpper();
     using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
-    var existingUser = await connection.QuerySingleOrDefaultAsync<UserEntity>(
-        "SELECT * FROM Users WHERE MailUser = @MailUser OR Username = @Username", new { user.MailUser, user.Username });
+    var userRepos = new UserRepos(_config);
+    var existingUser = await userRepos.ExistingUser(user);
     if (existingUser != null)
     {
         http.Response.StatusCode = 409; // Code HTTP 409 Conflict
         await http.Response.WriteAsync("");
         return;
     }
-    await connection.QueryAsync<UserEntity>(
-        "INSERT INTO Users (NameUser, LastNameUser, Username, MailUser, PasswordUser, CodeUser) VALUES (@NameUser, @LastNameUser, @Username, @MailUser, @PasswordUser, @CodeUser)", new { user.NameUser,user.LastNameUser, user.Username, user.MailUser, user.PasswordUser, CodeUser = userId });
-
+     await userRepos.InsertUserAsync(user, userId);
 
     http.Response.StatusCode = 200; // Code HTTP 200 OK
     await http.Response.WriteAsync($"{userId} user successfully created.");

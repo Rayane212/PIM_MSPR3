@@ -22,6 +22,16 @@ namespace PIM_MSPR3.Model
                 "(@CodeUser, @NameUser, @LastNameUser, @Username, @mailUser, @PasswordUser) ", User);
         }
 
+        public async Task<UserEntity> InsertUserAsync(UserEntity user, string userId)
+        {
+            var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
+            var insertUser = await oSqlConnection.QueryFirstOrDefaultAsync<UserEntity>(
+                "INSERT INTO Users (NameUser, LastNameUser, Username, MailUser, PasswordUser, CodeUser) " +
+                "VALUES (@NameUser, @LastNameUser, @Username, @MailUser, @PasswordUser, @CodeUser)",
+                new { user.NameUser, user.LastNameUser, user.Username, user.MailUser, user.PasswordUser, CodeUser = userId });
+            return insertUser;
+        }
+
         public List<UserEntity> GetAllUsers()
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
@@ -34,7 +44,13 @@ namespace PIM_MSPR3.Model
             return oSqlConnection.QueryFirstOrDefault<UserEntity>("Select * from Users where CodeUser = @CodeUser", new { CodeUser = CodeUser });
 
         }
+        public async Task<UserEntity> GetUserAuthAsync(string? mail, string? username, string password )
+        {
+            var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
 
+            return await oSqlConnection.QuerySingleOrDefaultAsync<UserEntity>(
+                "SELECT * FROM Users WHERE MailUser = @MailUser OR UserName = @Username AND PasswordUser = @PasswordUser", new { MailUser = mail, Username = username, PasswordUser = password });
+        }
         public int UpdateUser(UserEntity User)
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
@@ -64,6 +80,14 @@ namespace PIM_MSPR3.Model
                     new { CodeUser = CodeUser.ToUpper() });
                 return result != default(int);
             }
+        }
+
+        public async Task<UserEntity> ExistingUser(UserEntity user)
+        {
+            var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
+
+            return await oSqlConnection.QuerySingleOrDefaultAsync<UserEntity>(
+                   "SELECT * FROM Users WHERE MailUser = @MailUser OR Username = @Username", new { user.MailUser, user.Username });
         }
                 
     }

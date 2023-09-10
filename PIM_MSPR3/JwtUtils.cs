@@ -3,11 +3,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using PIM_MSPR3.Model;
 
 namespace StackTim_TP
 {
     public class JwtUtils
     {
+        private readonly IConfiguration? _configuration;
+
+        public JwtUtils(IConfiguration? configuration)
+        {
+            _configuration = configuration;
+        }
         public static Dictionary<string, string> DecodeJwt(string tokenString, string secret)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -28,6 +35,26 @@ namespace StackTim_TP
             }
 
             return result;
+        }
+
+        public string CreateToken(UserEntity user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["JwtConfig:Secret"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                new Claim(ClaimTypes.NameIdentifier, user.CodeUser.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.MailUser),
+            }),
+                Expires = DateTime.UtcNow.AddHours(2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return tokenString;
         }
 
     }
