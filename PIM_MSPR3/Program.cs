@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
                       });
 });
 
-// Ajouter le service de cache distribué
+// Ajouter le service de cache distribuÃ©
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -51,15 +51,15 @@ if (app.Environment.IsDevelopment())
 app.UseSession();
 app.UseCors(MyAllowSpecificOrigins);
 // SignIn 
-app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? mail ,string? username, string password ) =>  // Pour tester en front supprimer les var username et password des paramétre et mette la route en post 
+app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? mail ,string? username, string password ) =>  // Pour tester en front supprimer les var username et password des paramÃ©tre et mette la route en post 
 {
     try
     {
-        // Récupération des identifiants de l'utilisateur
+        // RÃ©cupÃ©ration des identifiants de l'utilisateur
         //string username = http.Request.Form["Username"];
         //string password = http.Request.Form["Password"];
 
-        // Vérifier que les identifiants sont valides
+        // VÃ©rifier que les identifiants sont valides
         using var connection = new SqlConnection(builder.Configuration.GetConnectionString("SQL"));
         var userRepos = new UserRepos(_config);
         var user = await userRepos.GetUserAuthAsync(mail, username, password);
@@ -70,14 +70,14 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? 
             return;
         }
 
-        // Création du token d'authentification
+        // CrÃ©ation du token d'authentification
         var jwtUtils = new JwtUtils(_config);
         string tokenString = jwtUtils.CreateToken(user);
 
         http.Response.Headers.Add("Authorization", "Bearer " + tokenString);
 
 
-        // Retourner le token d'authentification dans la réponse du serveur
+        // Retourner le token d'authentification dans la rÃ©ponse du serveur
         http.Response.StatusCode = 200;
         http.Response.ContentType = "application/json";
         await http.Response.WriteAsync(JsonConvert.SerializeObject(new { Token = tokenString }));
@@ -121,7 +121,7 @@ app.MapGet("/GetAllItems", async (IConfiguration _config, HttpContext http) =>
     if (userId == null || userId == "")
     {
         http.Response.StatusCode = 401;
-        await http.Response.WriteAsync("Utilisateur non connecté.");
+        await http.Response.WriteAsync("Utilisateur non connectÃ©.");
         return;
     }
     var oSqlConnection = new SqlConnection(_config.GetConnectionString("SQL"));
