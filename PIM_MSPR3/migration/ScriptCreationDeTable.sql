@@ -21,7 +21,7 @@ NameUser varchar(50),
 LastNameUser varchar(50), 
 Username varchar(30),
 mailUser varchar(30), 
-PasswordUser varchar(20),
+PasswordUser varchar(max),
 )
 
  
