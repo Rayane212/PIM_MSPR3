@@ -29,6 +29,12 @@ namespace PIM_MSPR3.Model
             return oSqlConnection.Query<ItemEntity>("Select * from Items").ToList(); ;
         }
 
+        public ItemEntity GetItemByCodeUniversal(string codeUniversal)
+        { 
+            var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
+            return oSqlConnection.QueryFirstOrDefault<ItemEntity>("Select * from Items where CodeUniversal = @CodeUniversal", new { CodeUniversal = codeUniversal});
+        }
+
         public ItemEntity GetItemByCodeProvider(string CodeItem, string CodeProvider)
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));

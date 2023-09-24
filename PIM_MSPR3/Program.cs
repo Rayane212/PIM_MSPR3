@@ -1,4 +1,5 @@
 using Dapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -113,17 +114,7 @@ app.MapPost("/signUp", async (IConfiguration _config, HttpContext http, UserEnti
 // Read Items
 app.MapGet("/GetAllItems", async (IConfiguration _config, HttpContext http) =>
 {
-    //var userId = http.Session.GetString("UserId");
-    var token = http.Request.Headers["Authorization"].ToString().Split(" ")[1]; 
-    var claims = JwtUtils.DecodeJwt(token, _config["JwtConfig:Secret"]);
-    var userId = claims[ClaimTypes.NameIdentifier];
-
-    if (userId == null || userId == "")
-    {
-        http.Response.StatusCode = 401;
-        await http.Response.WriteAsync("Utilisateur non connecté.");
-        return;
-    }
+    
     var oSqlConnection = new SqlConnection(_config.GetConnectionString("SQL"));
     var ok = oSqlConnection.Query<ItemEntity>("Select * from Items").ToList();
 
@@ -131,6 +122,56 @@ app.MapGet("/GetAllItems", async (IConfiguration _config, HttpContext http) =>
     await http.Response.WriteAsJsonAsync(ok);
 
 
+});
+
+app.MapGet("/products", async  (IConfiguration _config, HttpContext http) =>
+{
+    try
+    {
+        var item = new ItemRepos(_config);
+        var product = item.GetAllItem();
+        if (product != null)
+        {
+            http.Response.StatusCode = 200;
+            await http.Response.WriteAsJsonAsync(product);
+        }
+        else
+        {
+            http.Response.StatusCode = 400;
+            await http.Response.WriteAsJsonAsync(product);
+        }
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
+
+});
+
+app.MapPost("/products/{CodeUniversal}", async (IConfiguration _config, HttpContext http, string codeUniversal) =>
+{
+    try
+    {
+        var item = new ItemRepos(_config);
+        var product = item.GetItemByCodeUniversal(codeUniversal);
+        if (product != null)
+        {
+            http.Response.StatusCode = 200;
+            await http.Response.WriteAsJsonAsync(product);
+        }
+        else
+        {
+            http.Response.StatusCode = 400;
+            await http.Response.WriteAsJsonAsync(product);
+        }
+
+    }
+    catch (Exception ex)
+    {
+        http.Response.StatusCode = 500;
+        await http.Response.WriteAsync(ex.Message);
+    }
 });
 
 app.UseHttpsRedirection();
