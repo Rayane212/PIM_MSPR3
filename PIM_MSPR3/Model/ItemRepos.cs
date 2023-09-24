@@ -66,6 +66,14 @@ namespace PIM_MSPR3.Model
 
         }
 
+        public int DeleteItemByCodeProvider(string CodeProvider, string CodeUniversal)
+        {
+            var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
+            return oSqlConnection.Execute("delete from Items where CodeProvider = @CodeProvider and CodeUniversal = @CodeUniversal", new { CodeProvider = CodeProvider, CodeUniversal = CodeUniversal });
+
+        }
+
+
         public async Task<bool> ExistingItem(string CodeItem)
         {
             using (var connection = new SqlConnection(_configuration?.GetConnectionString("SQL")))

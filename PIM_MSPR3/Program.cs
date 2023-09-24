@@ -239,6 +239,31 @@ app.MapPost("/addProduct", async (IConfiguration _config, HttpContext http, Item
     }
 });
 
+app.MapDelete("/deleteProduct",  (IConfiguration _config, HttpContext http, string CodeProvider, string CodeUniversal) =>
+{
+    try
+    {
+        var token = http.Request.Headers["Authorization"].ToString().Split(" ")[1];
+        var claims = JwtUtils.DecodeJwt(token, _config["JwtConfig:Secret"]);
+        var itemRepos = new ItemRepos(_config);
+
+        var success = itemRepos.DeleteItemByCodeProvider(CodeProvider, CodeUniversal);
+        if (success > 0)
+        {
+            return Results.Ok("Product successfully deleted");
+        }
+        else
+        {
+            return Results.BadRequest("Erreur lors de la suppression du profil.");
+        }
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
