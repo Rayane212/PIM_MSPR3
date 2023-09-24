@@ -45,7 +45,7 @@ namespace PIM_MSPR3.Model
         public int UpdateItem(ItemEntity Item)
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
-            return oSqlConnection.Execute("Update Items set CodeUniversal = @CodeUniversal," +
+            return oSqlConnection.Execute("Update Items set " +
                 " WeightItem = @WeightItem," +
                 " OriginItem = @OriginItem," +
                 " UniteVenteItem = @UniteVenteItem," +
@@ -54,8 +54,8 @@ namespace PIM_MSPR3.Model
                 " CodePrice = @CodePrice," +
                 " CodeTax = @CodeTax," +
                 " CodeVolume = @CodeVolume," +
-                " CodeDescriptive = @CodeDescriptive," +
-                "where CodeItem = @CodeItem", Item);
+                " CodeDescriptive = @CodeDescriptive " +
+                "WHERE CodeItem = @CodeItem", Item);
 
         }
 
@@ -74,6 +74,18 @@ namespace PIM_MSPR3.Model
                 var result = await connection.QuerySingleOrDefaultAsync<int>(
                     "SELECT 1 FROM Items WHERE CodeItem = @CodeItem",
                     new { CodeItem = CodeItem.ToUpper()});
+                return result != default(int);
+            }
+        }
+
+        public async Task<bool> ExistingItemByCodeUniversal(string CodeUniversal)
+        {
+            using (var connection = new SqlConnection(_configuration?.GetConnectionString("SQL")))
+            {
+                await connection.OpenAsync();
+                var result = await connection.QuerySingleOrDefaultAsync<int>(
+                    "SELECT 1 FROM Items WHERE CodeUniversal = @CodeUniversal",
+                    new { CodeUniversal = CodeUniversal });
                 return result != default(int);
             }
         }

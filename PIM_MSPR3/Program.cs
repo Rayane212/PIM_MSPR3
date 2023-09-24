@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using PIM_MSPR3.Model;
 using StackTim_TP;
@@ -36,7 +37,35 @@ builder.Services.AddSession(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API DailyPim", Version = "v1" });
+
+    // Ajoutez ces lignes pour configurer l'authentification JWT dans Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -67,7 +96,7 @@ app.MapPost("/signIn", async (IConfiguration _config, HttpContext http, string? 
         if (user == null)
         {
             http.Response.StatusCode = 401; // Code HTTP 401 Unauthorized
-            await http.Response.WriteAsync("Adresse email ou mot de passe incorrect.");
+            await http.Response.WriteAsync("Email or password is wrong.");
             return;
         }
 
@@ -171,6 +200,42 @@ app.MapPost("/products/{CodeUniversal}", async (IConfiguration _config, HttpCont
     {
         http.Response.StatusCode = 500;
         await http.Response.WriteAsync(ex.Message);
+    }
+});
+
+app.MapPost("/addProduct", async (IConfiguration _config, HttpContext http, ItemEntity item) =>
+{
+    try
+    {
+        var token = http.Request.Headers["Authorization"].ToString().Split(" ")[1];
+        var claims = JwtUtils.DecodeJwt(token, _config["JwtConfig:Secret"]);
+        var userId = claims[ClaimTypes.NameIdentifier];
+
+        var itemRepos = new ItemRepos(_config);
+        var existingItem = await itemRepos.ExistingItemByCodeUniversal(item.CodeUniversal);
+
+        if (existingItem)
+        {
+            var ok = itemRepos.UpdateItem(item); 
+            if (ok >0)
+            {
+                return Results.Ok("Product successfully updated.");
+            }
+            return Results.BadRequest("Product could not be updated.");
+        }
+        else
+        {
+            var ok = itemRepos.InsertItem(item);
+            if (ok > 0)
+            {
+                return Results.Ok("Product successfully inserted");
+            }
+            return Results.BadRequest("Product could not be inserted");
+        }
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
     }
 });
 
