@@ -25,6 +25,9 @@ namespace PIM_MSPR3.Model
         public async Task<UserEntity> InsertUserAsync(UserEntity user, string userId)
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
+
+            user.PasswordUser = BCrypt.Net.BCrypt.HashPassword(user.PasswordUser);
+
             var insertUser = await oSqlConnection.QueryFirstOrDefaultAsync<UserEntity>(
                 "INSERT INTO Users (NameUser, LastNameUser, Username, MailUser, PasswordUser, CodeUser) " +
                 "VALUES (@NameUser, @LastNameUser, @Username, @MailUser, @PasswordUser, @CodeUser)",
@@ -44,12 +47,20 @@ namespace PIM_MSPR3.Model
             return oSqlConnection.QueryFirstOrDefault<UserEntity>("Select * from Users where CodeUser = @CodeUser", new { CodeUser = CodeUser });
 
         }
-        public async Task<UserEntity> GetUserAuthAsync(string? mail, string? username, string password )
+        public async Task<UserEntity?> GetUserAuthAsync(string? mail, string? username, string password )
         {
             var oSqlConnection = new SqlConnection(_configuration?.GetConnectionString("SQL"));
 
-            return await oSqlConnection.QuerySingleOrDefaultAsync<UserEntity>(
-                "SELECT * FROM Users WHERE MailUser = @MailUser OR UserName = @Username AND PasswordUser = @PasswordUser", new { MailUser = mail, Username = username, PasswordUser = password });
+            var user = await oSqlConnection.QuerySingleOrDefaultAsync<UserEntity>(
+                "SELECT * FROM Users WHERE MailUser = @MailUser OR UserName = @Username",
+                new { MailUser = mail, Username = username });
+
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordUser))
+            {
+                return user;
+            }
+
+            return null;
         }
         public int UpdateUser(UserEntity User)
         {
